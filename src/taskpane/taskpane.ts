@@ -11,8 +11,27 @@ Office.onReady((info) => {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
     document.getElementById("run").onclick = run;
+    document.getElementById("createTable").onclick = createTable; // Add this line
   }
 });
+
+export async function createTable() {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const table = sheet.tables.add("A1:D1", true);
+      table.name = "GPSData";
+      table.getHeaderRowRange().values =
+        [["Longitude", "Latitude", "NewLongitude", "NewLatitude"]];
+      table.rows.add(null, [[118, 32, 0, 0]]);
+      await context.sync();
+      console.log("Table created successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function run() {
   try {
     await Excel.run(async (context) => {
