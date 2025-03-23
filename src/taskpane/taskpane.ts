@@ -5,6 +5,7 @@
 
 /* global console, document, Excel, Office */
 
+var coordtransform=require('coordtransform');
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     document.getElementById("sideload-msg").style.display = "none";
@@ -12,23 +13,34 @@ Office.onReady((info) => {
     document.getElementById("run").onclick = run;
   }
 });
-
 export async function run() {
   try {
     await Excel.run(async (context) => {
-      /**
-       * Insert your Excel code here
-       */
-      const range = context.workbook.getSelectedRange();
-
-      // Read the range address
-      range.load("address");
-
-      // Update the fill color
-      range.format.fill.color = "yellow";
-
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const table = sheet.tables.getItem("GPSData");
+      // Load the table data
+      table.load("columns/items");
       await context.sync();
-      console.log(`The range address was ${range.address}.`);
+      const longitudeColumn = table.columns.getItemAt(0).getDataBodyRange();
+      const latitudeColumn = table.columns.getItemAt(1).getDataBodyRange();
+      const newLongitudeColumn = table.columns.getItemAt(2).getDataBodyRange();
+      const newLatitudeColumn = table.columns.getItemAt(3).getDataBodyRange();
+      longitudeColumn.load("values");
+      latitudeColumn.load("values");
+      await context.sync();
+      const longitudes = longitudeColumn.values;
+      const latitudes = latitudeColumn.values;
+      const newLongitudes = [];
+      const newLatitudes = [];
+      for (let i = 0; i < longitudes.length; i++) {
+        const [newLongitude, newLatitude] = coordtransform.wgs84togcj02(longitudes[i][0], latitudes[i][0]);
+        newLongitudes.push([newLongitude]);
+        newLatitudes.push([newLatitude]);
+      }
+      newLongitudeColumn.values = newLongitudes;
+      newLatitudeColumn.values = newLatitudes;
+      await context.sync();
+      console.log("Coordinates converted and updated successfully.");
     });
   } catch (error) {
     console.error(error);
