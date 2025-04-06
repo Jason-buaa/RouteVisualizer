@@ -56,11 +56,11 @@ All the information about Office Add-ins is found in our [official documentation
 
 If you edit the manifest as part of your changes, use the **Validate Manifest File** option in the Office Add-ins Development Kit. This shows you errors in the manifest syntax.
 
-## Engage with the team
+## References
 
-Did you experience any problems? [Create an issue](https://aka.ms/officedevkitnewissue) and we'll help you out.
+1.[高德地图轨迹回放](https://lbs.amap.com/demo/javascript-api-v2/example/marker/replaying-historical-running-data)
 
-Want to learn more about new features and best practices for the Office platform? [Join the Microsoft Office Add-ins community call](https://learn.microsoft.com/office/dev/add-ins/overview/office-add-ins-community-call).
+
 
 ## Copyright
 
